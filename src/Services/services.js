@@ -5,7 +5,7 @@ import axios from "axios";
 const apiPorta = "5063";
 
 // Monta a URL base da API local usando a porta definida
-const apiLocal = `http://localhost:${apiPorta}/api`;
+const apiLocal = `http://localhost:${apiPorta}/api/`;
 
 // Cria uma instância do Axios já configurada com a URL base da API
 const api = axios.create({
