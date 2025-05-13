@@ -1,0 +1,12 @@
+footer{
+    background-color: #cc3f55;
+
+    display: flex;
+    justify-content: center;
+    height: 35px;
+}
+
+footer p{
+    color: azure;
+    text-align: center;
+}
