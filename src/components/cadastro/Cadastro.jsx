@@ -5,29 +5,28 @@ const Cadastro = (props) => {
     return (
         <section className="section_cadastro">
             <form onSubmit={props.funcCadastro} className="layout_grid form_cadastro">
-                <h1>{props.tituloPagina}</h1>
+                <h1>{props.tituloCadastro}</h1>
                 <hr />
                 <div className="campos_cadastro">
                     <div className="campo_cad_nome">
-                        <label htmlFor="nome">Nome</label>
+                        <label htmlFor="nome" >Nome</label>
                         <input
                             type="text"
                             name="nome"
-                            placeholder={`Qual o nome do ${props.nomePlace}`}
+                            placeholder={`Digite o nome do ${props.placeholder}`}
                             value={props.valorInput}
-                            //  ao mudar o input algo acontece:
-                            // atualizar o estado do pai ao digitar
-                            // targe esta indo buscar o valor do "e"
+                            // Ao mudar o input algo acontece
+                            //  Atualizar o estado do pai ao digitar
                             onChange={(e) => props.setValorInput(e.target.value)}
                         />
                     </div>
-                    <div className="campo_cad_nome" style={{ display: props.visibilidade }}>
-                        <label htmlFor="genero">Gênero</label>
+                    <div className="campo_cad_genero" style={{ display: props.visibilidade }}>
+                        <label htmlFor="genro">Gênero</label>
                         <select name="genero" id="">
                             <option value="" disabled selected>Selecione</option>
                             <option value="">op 1</option>
                             <option value="">op 2</option>
-                            <option value="">op 3</option>
+                            <option value=""> op 3</option>
                         </select>
                     </div>
                     <Botao nomeDoBotao="Cadastrar" />

@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
-import api from "../../Services/services"; // Mantendo apenas uma importação de api
+import { useEffect, useState } from "react"; // Hooks do React
+import api from "../../Services/services"; // Importação do serviço de API
+import Swal from 'sweetalert2'; // Biblioteca para alertarrs bonitos
 
-//importar o sweet alert:
-import Swal from 'sweetalert2'
-
-// importação de componentes:
+// Importação de componentes reutilizáveis:
+import Cadastro from "../../components/cadastro/Cadastro";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
-import Cadastro from "../../components/cadastro/Cadastro";
 import Lista from "../../components/lista/Lista";
 
 const CadastroGenero = () => {
 
-    // nome do genero
+    // Estados do componente:
+    // Armazena o valor do input de gênero
     const [genero, setGenero] = useState("");
+    // Armazena a lista de gêneros retornada da API
+    const [listaGenero, setListaGenero] = useState([]);
+    // Estado utilizado para armazenar o retorno da exclusão (pode ser útil para debug)
+    const [deletaGenero, setDeletaGenero] = useState();
 
-    function alerta(icone, mensagem) {
+    // Função para exibir alertarrs personalizados com SweetAlert
+    function alertar(icone, mensagem) {
         const Toast = Swal.mixin({
             toast: true,
             position: "top-end",
@@ -27,63 +31,99 @@ const CadastroGenero = () => {
                 toast.onmouseleave = Swal.resumeTimer;
             }
         });
+
         Toast.fire({
             icon: icone,
             title: mensagem
         });
     }
 
-
+    // Função para cadastrar um novo gênero
     async function cadastrarGenero(e) {
-        e.preventDefault();
+        e.preventDefault(); // Previne o comportamento padrão do formulário
 
-        // verificar se o input está vindo vazio
-        if (genero.trim() != "") {
+        if (genero.trim() != "") { // Verifica se o campo não está vazio
             try {
-                // cadastrar um genero: post
-                await api.post("genero", { nome: genero });
-                alerta("success", "Cadastro realizado com sucesso!")
-                setGenero("");
+                await api.post("genero", { nome: genero }); // Envia o dado para a API
+                alertar("success", "Cadastro realizado com sucesso!");
+                setGenero(""); // Limpa o campo após o envio
+                listarGenero();
             } catch (error) {
-                alerta("error", "Erro! Entre em contato com o suporte!")
-                console.log(error);
+                alertar("error", "Erro! entre em contato com o suporte");
             }
         } else {
-            alerta("error", "Erro! Preencha o campo")
+            alertar("error", "Preencha o campo vazio"); // Validação do campo vazio
         }
     }
 
+    // Função que busca a lista de gêneros cadastrados
+    async function listarGenero() {
+        try {
+            const resposta = await api.get("genero"); // Requisição GET para buscar os dados
+            setListaGenero(resposta.data); // Atualiza o estado com a lista
+            console.log(resposta.data); // Log para teste
+        } catch (error) {
+            console.log(error); // Exibe o erro no console se algo falhar
+        }
+    }
 
-    // teste: validar o genero
-    // useEffect(funcao, dependência)
-    // useEffect(() => {
-    //     console.log(genero);
-    // }, [genero]);
-    // fim do teste
+    // Função para remover um gênero pelo ID
+    async function removerGenero(idGenero, warning) {
+        try {
+            const excluirGenero = await api.delete(`genero/${idGenero}`); // Requisição DELETE
+            setDeletaGenero(excluirGenero.data); // Atualiza o estado com a resposta
+
+            // Confirmação com SweetAlert
+            Swal.fire({
+                title: "Você tem certeza que quer excluir?",
+                text: "Você não vai poder reverter isso!",
+                icon: warning,
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sim, deletar isso!"
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Deletado!",
+                        text: "Deletado com sucesso!",
+                        icon: "success"
+                    });
+                }
+            });
+        } catch (error) {
+            console.log(error); // Erro ao excluir
+        }
+    }
+
+    // useEffect executa listarGenero ao montar o componente
+    useEffect(() => {
+        listarGenero(); // Carrega os dados quando o componente for renderizado
+    }, []); // Correto: apenas na montagem
 
     return (
         <>
             <Header />
             <main>
                 <Cadastro
-                    tituloPagina="Cadastrar Gênero"
+                    tituloCadastro="Cadastro de Gênero"
                     visibilidade="none"
-                    nomePlace="Gênero"
-                    // atribuind a função:
-                    funcCadastro={cadastrarGenero}
-                    // atribuind o valor ao input:
-                    valorInput={genero}
-                    // atribuind a função que atualiza o meu genero:
-                    setValorInput={setGenero}
+                    placeholder="Gênero"
+                    funcCadastro={cadastrarGenero} // Passa a função de cadastro
+                    valorInput={genero} // Valor atual do input
+                    setValorInput={setGenero} // Atualiza o valor do input
                 />
                 <Lista
-                    listaCadastro="Lista de Gêneros"
-                    visibilidadeGenero="none"
+                    titulo="Lista dos Gêneros"
+                    visible="none"
+                    lista={listaGenero} // Passa a lista para o componente Lista
+                    deletar={removerGenero} // Passa a função de deletar
                 />
             </main>
             <Footer />
         </>
     );
-};
+}
 
 export default CadastroGenero;

@@ -1,6 +1,7 @@
-import Header from "../../components/header/Header";
-import Footer from "../../components/footer/Footer";
+// import { Fragment } from "react";
 import Cadastro from "../../components/cadastro/Cadastro";
+import Footer from "../../components/footer/Footer";
+import Header from "../../components/header/Header";
 import Lista from "../../components/lista/Lista";
 
 const CadastroFilme = () => {
@@ -8,10 +9,13 @@ const CadastroFilme = () => {
         <>
             <Header />
             <main>
-                <Cadastro tituloPagina="Cadastrar Filme"
-                    nomePlace="Filme"
+                <Cadastro
+                    tituloCadastro="Cadastro de Filme"
+                    placeholder="Filme"
                 />
-                <Lista listaCadastro="Lista de filmes" />
+                <Lista
+                titulo = "Lista de Filmes"
+                />
             </main>
             <Footer />
         </>

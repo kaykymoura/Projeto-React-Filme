@@ -76,7 +76,6 @@
     font-weight: 700;
     width: 80px;
     text-align: left;
-    padding: 20px;
 }
 
 .item_lista td:first-child{
@@ -89,4 +88,3 @@
 }
 
 }
-
