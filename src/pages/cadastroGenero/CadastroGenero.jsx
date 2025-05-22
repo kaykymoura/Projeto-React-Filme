@@ -47,7 +47,7 @@ const CadastroGenero = () => {
                 await api.post("genero", { nome: genero }); // Envia o dado para a API
                 alertar("success", "Cadastro realizado com sucesso!");
                 setGenero(""); // Limpa o campo após o envio
-                listarGenero();
+                listarGenero(); // Ele atualiza a pagina sem precisar regarrega-la
             } catch (error) {
                 alertar("error", "Erro! entre em contato com o suporte");
             }
@@ -92,6 +92,7 @@ const CadastroGenero = () => {
                     });
                 }
             });
+            listarGenero(); // Ele atualiza a pagina sem precisar regarrega-la
         } catch (error) {
             console.log(error); // Erro ao excluir
         }
@@ -100,8 +101,35 @@ const CadastroGenero = () => {
     // useEffect executa listarGenero ao montar o componente
     useEffect(() => {
         listarGenero(); // Carrega os dados quando o componente for renderizado
-    }, []); // Correto: apenas na montagem
+    }, [listaGenero]); // Correto: apenas na montagem
 
+    async function editarGenero(genero) {
+
+        const { value: novoGenero } = await Swal.fire({
+            title: "Edite seu Genero",
+            input: "text",
+            inputLabel: "Novo genero",
+            inputValue: genero.nome,
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return "O campo nao pode estar vazio! ";
+                }
+            }
+        });
+
+        if (novoGenero) {
+            try {
+                
+                await api.put(`genero/${genero.idGenero}`,
+                    {nome: novoGenero} );
+                Swal.fire(`o genero modificado 
+                ${novoGenero}`);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
     return (
         <>
             <Header />
@@ -118,7 +146,8 @@ const CadastroGenero = () => {
                     titulo="Lista dos Gêneros"
                     visible="none"
                     lista={listaGenero} // Passa a lista para o componente Lista
-                    deletar={removerGenero} // Passa a função de deletar
+                    funcDeletar={removerGenero} // Passa a função de deletar
+                    funcEditar={editarGenero} // Passa a funcao de editar
                 />
             </main>
             <Footer />
